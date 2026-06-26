@@ -1,0 +1,338 @@
+<!DOCTYPE html><html lang="zh-TW"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EMT-1 情境題庫｜抽考練習</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Microsoft JhengHei','Noto Sans TC',sans-serif;background:#1a1a2e;min-height:100vh;color:#222;}
+/* ─── CONFIG SCREEN ─── */
+#cfg{padding:20px 16px;text-align:center;}
+.cfg-hero{background:linear-gradient(135deg,#c0392b,#e74c3c,#f39c12);border-radius:16px;padding:20px 16px;color:white;margin-bottom:18px;}
+.cfg-hero h1{font-size:20px;letter-spacing:1px;margin-bottom:4px;}
+.cfg-hero p{font-size:11px;opacity:.85;}
+.cfg-badge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;font-size:11px;margin-top:6px;}
+.cfg-section{background:white;border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.cfg-label{font-size:12px;font-weight:bold;color:#555;margin-bottom:10px;text-align:left;}
+.btn-group{display:flex;gap:8px;}
+.btn-sel{flex:1;border:2px solid #e0e0e0;background:white;border-radius:10px;padding:10px 4px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:bold;color:#555;transition:all .15s;line-height:1.4;}
+.btn-sel:hover{border-color:#e74c3c;color:#e74c3c;}
+.btn-sel.active{border-color:#e74c3c;background:#e74c3c;color:white;}
+.btn-sel .sub{font-size:10px;font-weight:normal;opacity:.8;display:block;margin-top:2px;}
+.btn-start{width:100%;background:linear-gradient(135deg,#c0392b,#e74c3c);color:white;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:bold;cursor:pointer;font-family:inherit;letter-spacing:1px;}
+.btn-start:hover{opacity:.9;}
+.btn-start:disabled{opacity:.4;cursor:default;}
+/* ─── QUIZ SCREEN ─── */
+#quiz{display:none;}
+.q-header{background:linear-gradient(135deg,#c0392b,#e74c3c);padding:10px 14px;color:white;}
+.q-header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.q-title{font-size:13px;font-weight:bold;}
+.q-score-row{display:flex;gap:10px;font-size:11px;}
+.q-score-item span{font-weight:bold;}
+.q-pbar-bg{background:rgba(255,255,255,.3);height:4px;border-radius:2px;}
+.q-pbar{background:white;height:4px;border-radius:2px;transition:width .3s;}
+.q-body{padding:12px 14px;}
+.q-card{background:white;border-radius:12px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.1);}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.q-num-badge{background:#2c3e50;color:white;border-radius:20px;padding:2px 10px;font-size:10px;font-weight:bold;}
+.q-cat-badge{font-size:10px;color:#7f8c8d;background:#ecf0f1;padding:2px 8px;border-radius:10px;}
+.q-diff-easy{color:#27ae60;background:#eafaf1;}
+.q-diff-hard{color:#8e44ad;background:#fdf2fb;}
+.q-scene{background:#fff8e1;border-left:4px solid #f39c12;padding:8px 10px;border-radius:0 6px 6px 0;font-size:11.5px;line-height:1.6;margin-bottom:10px;color:#5d4037;}
+.q-ask{font-size:13px;font-weight:bold;color:#2c3e50;margin-bottom:10px;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:6px;}
+.opt{border:2px solid #e0e0e0;border-radius:8px;padding:9px 12px;cursor:pointer;font-size:12px;line-height:1.5;transition:all .15s;display:flex;align-items:flex-start;gap:8px;background:white;}
+.opt:hover:not(.locked){border-color:#3498db;background:#eaf4fb;}
+.opt-l{background:#ecf0f1;border-radius:4px;padding:1px 7px;font-weight:bold;font-size:11px;min-width:24px;text-align:center;flex-shrink:0;margin-top:1px;}
+.opt.c-right{border-color:#27ae60;background:#eafaf1;}
+.opt.c-right .opt-l{background:#27ae60;color:white;}
+.opt.c-wrong{border-color:#e74c3c;background:#fdecea;}
+.opt.c-wrong .opt-l{background:#e74c3c;color:white;}
+.opt.locked{cursor:default;}
+.fb{margin-top:10px;border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.6;display:none;}
+.fb-ok{background:#eafaf1;border-left:4px solid #27ae60;color:#1e8449;}
+.fb-no{background:#fdecea;border-left:4px solid #e74c3c;color:#922b21;}
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:12px;}
+.q-ctr{font-size:11px;color:#7f8c8d;}
+.btn-next{background:#2c3e50;color:white;border:none;border-radius:8px;padding:9px 20px;font-size:13px;font-weight:bold;cursor:pointer;font-family:inherit;}
+.btn-next:disabled{background:#bdc3c7;cursor:default;}
+/* ─── RESULT SCREEN ─── */
+#result{display:none;padding:20px 16px;text-align:center;}
+.r-circle{width:110px;height:110px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px;font-weight:bold;color:white;}
+.r-title{font-size:18px;font-weight:bold;margin-bottom:4px;color:#2c3e50;}
+.r-sub{font-size:12px;color:#7f8c8d;margin-bottom:14px;}
+.r-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.r-box{background:white;border-radius:10px;padding:10px;box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.r-box .rn{font-size:22px;font-weight:bold;}
+.r-box .rl{font-size:10px;color:#7f8c8d;margin-top:2px;}
+.r-cats{background:white;border-radius:10px;padding:12px;margin-bottom:14px;text-align:left;box-shadow:0 1px 6px rgba(0,0,0,.1);}
+.r-cats h3{font-size:12px;color:#2c3e50;font-weight:bold;margin-bottom:8px;}
+.cat-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px;}
+.cat-name{width:80px;flex-shrink:0;color:#555;}
+.cat-bar-bg{flex:1;background:#ecf0f1;height:8px;border-radius:4px;}
+.cat-bar{height:8px;border-radius:4px;transition:width .5s;}
+.cat-pct{width:32px;text-align:right;font-weight:bold;font-size:11px;}
+.wrong-list{background:white;border-radius:10px;padding:12px;text-align:left;max-height:220px;overflow-y:auto;box-shadow:0 1px 6px rgba(0,0,0,.1);margin-bottom:14px;}
+.wrong-list h3{font-size:12px;color:#c0392b;margin-bottom:8px;}
+.wi{font-size:11px;color:#555;padding:4px 0;border-bottom:1px solid #f5f5f5;line-height:1.5;}
+.btn-restart{background:linear-gradient(135deg,#c0392b,#e74c3c);color:white;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit;width:100%;}
+</style></head><body>
+
+<!-- CONFIG -->
+<div id="cfg">
+  <div class="cfg-hero">
+    <h1>🚑 EMT-1 情境題庫</h1>
+    <p>創傷 × 非創傷 × 生命微象 × 機轉判斷</p>
+    <span class="cfg-badge">📚 <span id="badgeCount">65</span> 題完整題庫｜細節全覆蓋</span>
+  </div>
+  <div class="cfg-section">
+    <div class="cfg-label">📊 選擇難度</div>
+    <div class="btn-group">
+      <button class="btn-sel" id="d0" onclick="setDiff('easy')">🟢 基礎<span class="sub">流程順序<br>數值記憶</span></button>
+      <button class="btn-sel" id="d1" onclick="setDiff('hard')">🟣 進階<span class="sub">陷阱情境<br>細節判斷</span></button>
+      <button class="btn-sel active" id="d2" onclick="setDiff('all')">🎯 混合<span class="sub">全部難度<br>（推薦）</span></button>
+    </div>
+  </div>
+  <div class="cfg-section">
+    <div class="cfg-label">📝 選擇題數</div>
+    <div class="btn-group">
+      <button class="btn-sel" id="c0" onclick="setCnt(10)">10 題<span class="sub">快速測驗<br>約5分鐘</span></button>
+      <button class="btn-sel active" id="c1" onclick="setCnt(30)">30 題<span class="sub">標準練習<br>約15分鐘</span></button>
+      <button class="btn-sel" id="c2" onclick="setCnt(50)">50 題<span class="sub">完整挑戰<br>約25分鐘</span></button>
+    </div>
+  </div>
+  <button class="btn-start" onclick="startQuiz()">開始作答 ▶</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="q-header">
+    <div class="q-header-top">
+      <span class="q-title">🚑 EMT-1 情境題</span>
+      <span style="font-size:11px;opacity:.8" id="qTitle"></span>
+    </div>
+    <div class="q-score-row">
+      <div class="q-score-item">✅ 對 <span id="sc" style="color:#7dff7d">0</span></div>
+      <div class="q-score-item">❌ 錯 <span id="sw" style="color:#ff9999">0</span></div>
+      <div class="q-score-item">📋 剩 <span id="sr">0</span></div>
+    </div>
+    <div style="margin-top:8px;"><div class="q-pbar-bg"><div class="q-pbar" id="pbar" style="width:0%"></div></div></div>
+  </div>
+  <div class="q-body">
+    <div class="q-card">
+      <div class="q-meta">
+        <span class="q-num-badge" id="qnum"></span>
+        <div style="display:flex;gap:4px;">
+          <span class="q-cat-badge" id="qcat"></span>
+          <span class="q-cat-badge" id="qdiff"></span>
+        </div>
+      </div>
+      <div class="q-scene" id="qscene"></div>
+      <div class="q-ask" id="qask"></div>
+      <div class="opts" id="opts"></div>
+      <div class="fb" id="fb"></div>
+      <div class="q-nav">
+        <span class="q-ctr" id="qctr"></span>
+        <button class="btn-next" id="btnN" disabled onclick="nextQ()">下一題 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="r-circle" id="rc"></div>
+  <div class="r-title" id="rt"></div>
+  <div class="r-sub" id="rs"></div>
+  <div class="r-grid">
+    <div class="r-box"><div class="rn" style="color:#27ae60" id="rv-c">0</div><div class="rl">✅ 答對</div></div>
+    <div class="r-box"><div class="rn" style="color:#e74c3c" id="rv-w">0</div><div class="rl">❌ 答錯</div></div>
+    <div class="r-box"><div class="rn" style="color:#3498db" id="rv-p">0%</div><div class="rl">📊 正確率</div></div>
+  </div>
+  <div class="r-cats" id="rcats"></div>
+  <div class="wrong-list" id="wl"></div>
+  <button class="btn-restart" onclick="goConfig()">🔄 重新設定並作答</button>
+</div>
+
+<script>
+const B=[
+// ===== 現場常規 =====
+{cat:"現場常規",d:"easy",sc:"你接獲派遣，抵達事故現場，傷患倒在路中央。",q:"踏出救護車後第一步是？",o:["衝向傷患立刻評估","確認現場環境是否安全","先拿好所有裝備","請路人圍成人牆保護傷患"],a:1,e:"現場常規第一步永遠是「環境安全確認」，未確認就衝上去，EMT 自己可能也成為傷患。"},
+{cat:"現場常規",d:"easy",sc:"現場傷患有傳染性疾病病史，且有大量血液噴濺。",q:"感染控制除手套口罩外，還需加上？",o:["雙層手套就夠","加戴護目鏡並穿隔離衣","再多戴一個口罩","加穿防彈背心"],a:1,e:"有噴濺風險時：基本（手套＋口罩），高風險再加護目鏡＋隔離衣。"},
+{cat:"現場常規",d:"easy",sc:"你與副手到達現場，防護措施尚未完備。",q:"防護措施完備前，你應該？",o:["立刻接近傷患","與傷患保持適當安全距離","先打119","請傷患自己走過來"],a:1,e:"「保持距離」原則：防護未完備前，與病人保持適當安全距離，自身安全優先。"},
+{cat:"現場常規",d:"easy",sc:"現場有多名傷患，你是第一位抵達的 EMT。",q:"檢傷分類後，下一步應？",o:["立刻救治最重的傷患","請副手撥打119報告","自己撥打119","先問目擊者"],a:1,e:"「副手撥打119」報告傷患人數及嚴重度，主手準備接近傷患。兩人分工。"},
+{cat:"現場常規",d:"hard",sc:"非創傷案例，你是主手，接近傷病患。",q:"非創傷流程，主副手各開什麼裝備？",o:["主手開三合一，副手開急救包","主手開急救包，副手開三合一","兩人都開急救包","兩人都開三合一"],a:1,e:"非創傷：主手→急救包；副手→三合一。創傷則多了頸椎評估。"},
+// ===== 創傷/頸椎 =====
+{cat:"創傷頸椎",d:"easy",sc:"車禍，懷疑頸椎受傷，同時發現大腿大量出血。",q:"優先處置順序？",o:["先頸椎減移再止血","先止血（大出血合併頸椎問題以止血為優先）","兩件同時","先意識評估"],a:1,e:"明確規定：大出血合併頸椎問題→「止血優先」！失血是立即致命威脅。"},
+{cat:"創傷頸椎",d:"easy",sc:"創傷案例，副手正在操作頸椎限制。",q:"主手何時才能放下裝備開始評估？",o:["立刻","等副手完成頸椎限制並喊「好」之後","等5分鐘","等救護車"],a:1,e:"主手「等副手喊好之後」才可放下裝備。頸椎未固定時移動傷患可能造成脊髓損傷。"},
+{cat:"創傷頸椎",d:"hard",sc:"機車事故，傷患頭戴安全帽，懷疑頸椎受傷。",q:"進行頸椎評估前，安全帽應？",o:["絕對不能脫","先脫除安全帽才能評估","用膠帶固定在頭上","等醫院再脫"],a:1,e:"創傷流程：「若有安全帽，先脫除安全帽」，才能進行頸椎評估與保護。"},
+{cat:"創傷頸椎",d:"hard",sc:"有符合受傷機轉，執行頸椎減移術，告知傷患。",q:"標準告知語概念是？",o:["我要幫你做CPR","我們懷疑您頸椎受傷，請不要亂動","請問您哪裡痛？","我需要剪開您的衣服"],a:1,e:"頸椎減移告知：「先生您好，我們懷疑您頸椎受傷，請不要亂動」（有符合機轉才做）。"},
+{cat:"創傷頸椎",d:"hard",sc:"創傷案例，副手不需做頸椎限制，發現大出血。",q:"副手此時可協助？",o:["等主手指示不動","協助主手處理止血","開始詢問病史","去拿裝備"],a:1,e:"副手若不需頸椎限制，可協助主手止血。副手角色靈活，視情況分工。"},
+// ===== 意識評估 =====
+{cat:"意識評估",d:"easy",sc:"到達非創傷傷患身旁，開始意識評估。",q:"意識評估正確呼叫順序？",o:["直接捏斜方肌","叫名字（邊開急救包）→拍肩→捏斜方肌（疼痛刺激）","先測血壓","叫一次就做CPR"],a:1,e:"標準順序：叫名字→無反應→拍肩→無反應→捏斜方肌→無反應→目視呼吸＋頸動脈。"},
+{cat:"意識評估",d:"easy",sc:"呼叫傷患無反應、拍肩無反應，進行疼痛刺激。",q:"EMT-1 標準疼痛刺激部位？",o:["壓眼眶","捏斜方肌","壓胸骨","捏手臂內側"],a:1,e:"EMT-1 標準疼痛刺激：「捏斜方肌」（頸肩交界三角形肌肉）。壓眼眶、胸骨摩擦非 EMT-1 標準。"},
+{cat:"意識評估",d:"hard",sc:"疼痛刺激後仍無反應，目視無適當呼吸，頸動脈摸不到。",q:"下一步立刻進入？",o:["繼續評估呼吸道","心臟停止急救流程（CPR）","給予頸椎限制","先量血壓"],a:1,e:"目視無適當呼吸＋頸動脈摸不到→立刻「心臟停止急救流程（CPR）」，這是最高優先！"},
+{cat:"意識評估",d:"hard",sc:"創傷意識評估，使用「3Q法」評估GCS。",q:"3Q法三個問題對應的GCS向度？",o:["姓名生日職業","你可以看著我（E）、你叫什麼名字（V）、手或腳動一下（M）","你哪裡痛？幾歲？在哪裡？","你認得我？記得今天？能站起來？"],a:1,e:"GCS 3Q法：①眼睛看我（E-眼）②告訴我名字（V-語）③手或腳動一下（M-動），分別對應GCS三向度。"},
+// ===== 呼吸道 A =====
+{cat:"呼吸道A",d:"easy",sc:"傷患有明顯的液體流動雜音（分泌物聲）。",q:"此雜音的正確處置？",o:["放置鼻咽呼吸道","放置口咽呼吸道","使用抽吸器","給非再呼吸型面罩"],a:2,e:"「雜音」（分泌物、嘔吐物）→ 抽吸器清除。鼻/口咽是針對鼾音，不是清除異物。"},
+{cat:"呼吸道A",d:"easy",sc:"傷患有鼾音，意識清醒，仍可回應對話。",q:"鼾音＋意識清醒，應選？",o:["口咽呼吸道（OPA）","鼻咽呼吸道（NPA）","抽吸器","暫不輔助"],a:1,e:"鼾音：意識清醒或不清→NPA；昏迷且對痛無反應→OPA。清醒的人放OPA會嘔吐。"},
+{cat:"呼吸道A",d:"easy",sc:"傷患意識昏迷，對疼痛完全無反應，有鼾音。",q:"應選擇哪種呼吸道輔助？",o:["鼻咽呼吸道（NPA）","口咽呼吸道（OPA）","只做抽吸","暫不處置"],a:1,e:"昏迷且對痛無反應→「口咽呼吸道（OPA）」。NPA用意識較好的，OPA用最深層無意識。"},
+{cat:"呼吸道A",d:"hard",sc:"創傷傷患鼾音，你想放NPA，但懷疑顱底骨折。",q:"此情況應如何？",o:["直接放NPA，顱底不影響","先確認有無顱底骨折再決定","改用OPA","不放任何輔助"],a:1,e:"創傷流程：鼾音→NPA，但「先確認有無顱底骨折」！有顱底骨折NPA可能深入顱內，改用OPA。"},
+{cat:"呼吸道A",d:"hard",sc:"非創傷，傷患意識不清，無法正常對話，呼吸道出問題。",q:"主手應如何處理呼吸道？",o:["等副手處理","請徒手暢通呼吸道","先給氧","立刻放OPA"],a:1,e:"意識不清或無法正常對話→主手「請徒手暢通呼吸道」（頭後仰下顎上提），再視情況放輔助器。"},
+{cat:"呼吸道A",d:"hard",sc:"創傷，副手正做頸椎限制，傷患呼吸道不暢通。",q:"副手能協助呼吸道嗎？",o:["絕對不能動","若副手不需做頸椎限制時，可請副手協助","副手永遠不能碰呼吸道","需醫師同意"],a:1,e:"「若副手不需做頸椎限制，且呼吸道不暢通，可請副手協助」。頸椎是副手首要任務，有餘力才協助。"},
+// ===== 呼吸 B =====
+{cat:"呼吸B",d:"easy",sc:"你開始評估B（呼吸），評估呼吸深淺快慢。",q:"B步驟的評估時間上限？",o:["不超過5秒","不超過10秒","不超過20秒","不超過30秒"],a:1,e:"B（呼吸）「不超過10秒」，同時夾上血氧機。時間過長會延誤後續評估。"},
+{cat:"呼吸B",d:"easy",sc:"傷患呼吸淺快，嘴巴緊閉（無張口），SpO₂ 91%。",q:"應給予哪種給氧裝置？",o:["鼻導管","一般型面罩","非再呼吸型面罩","暫不給氧"],a:0,e:"淺快「無張口」→ 鼻導管。口訣：沒開嘴→從鼻子進；開嘴→面罩蓋住。"},
+{cat:"呼吸B",d:"easy",sc:"傷患呼吸淺快，嘴巴張開，SpO₂ 90%。",q:"應給予哪種給氧裝置？",o:["鼻導管","一般型面罩","非再呼吸型面罩","暫不給氧"],a:1,e:"淺快「張口」→ 一般型面罩。嘴巴開著時鼻導管效果差，需面罩覆蓋整個口鼻。"},
+{cat:"呼吸B",d:"easy",sc:"火場救出傷患，意識清楚，呼吸正常，SpO₂ 96%，但懷疑吸入濃煙。",q:"應給予哪種給氧裝置？",o:["鼻導管","一般型面罩","非再呼吸型面罩","不需給氧SpO₂正常"],a:2,e:"火場/嗆灼傷/CO中毒→「非再呼吸型面罩」，即使SpO₂看似正常，CO中毒時血氧計可能誤判。"},
+{cat:"呼吸B",d:"hard",sc:"評估B完成，SpO₂ 93%，副手目前未做頸椎限制。",q:"副手此時可協助什麼？",o:["只能等主手","協助給予給氧裝置（SpO₂<94%）","查詢傷患病歷","立刻撥119"],a:1,e:"若副手不需頸椎限制，且SpO₂<94%，副手可「協助給予給氧裝置」。"},
+{cat:"呼吸B",d:"hard",sc:"一氧化碳中毒傷患，SpO₂顯示98%。",q:"給氧裝置應選？",o:["不需給氧SpO₂98%很好","鼻導管","一般型面罩","非再呼吸型面罩"],a:3,e:"CO中毒時血氧計無法區分一氧化血紅素，SpO₂可能偽正常。CO中毒→一律非再呼吸型面罩給最高濃度氧氣。"},
+// ===== 循環 C =====
+{cat:"循環C",d:"easy",sc:"初步評估C（循環），評估橈動脈。",q:"橈動脈評估的重點？",o:["只測一側","兩側橈動脈是否對稱且可摸到","只計脈搏次數","看橈動脈是否出血"],a:1,e:"循環C：「兩側橈動脈是否對稱、摸的到」。不對稱可能提示血管問題。"},
+{cat:"循環C",d:"easy",sc:"你輕壓傷患甲床約3-5秒後放開。",q:"正常微血管充填時間？",o:["0.5秒以內","大於2秒異常","剛好2秒","大於5秒"],a:1,e:"微血管充填「大於2秒為異常」（危急標準）。正常2秒內回填，延遲代表末梢灌流不足。"},
+{cat:"循環C",d:"easy",sc:"創傷循環評估，完成橈動脈、微血管充填、膚色後。",q:"創傷特有、非創傷沒有的第4個循環項目？",o:["量血壓","評估骨盆穩定性（向內向下壓）","頸靜脈評估","詢問腹痛"],a:1,e:"創傷C多了「骨盆評估」：雙手放骨盆位置，向內並向下壓一次，評估是否穩定或有疼痛。"},
+{cat:"循環C",d:"hard",sc:"評估膚色，末梢出現發紺（藍紫色）且末梢冰冷濕黏。",q:"這些表現通常提示？",o:["正常生理反應","末梢灌流不足，可能休克","只是天氣太冷","需量體溫才能判斷"],a:1,e:"發紺（末梢）＋濕冷→末梢灌流不足，可能提示休克或嚴重心血管問題，加強監測並回報。"},
+{cat:"循環C",d:"hard",sc:"創傷案例，你做骨盆評估時，傷患感到劇烈疼痛。",q:"骨盆壓痛最可能提示？",o:["腹部受傷","骨盆骨折（可能大量內出血）","腰椎問題","腎臟損傷"],a:1,e:"骨盆疼痛提示骨盆骨折，骨盆內可積血超過2000ml（足以造成休克）。要立刻回報並加速送醫。"},
+// ===== 神經學 D =====
+{cat:"神經學D",d:"easy",sc:"創傷初步評估D（神經學），完成GCS評估後。",q:"D步驟中GCS之外還要評估哪兩項？",o:["血壓與血氧","兩側瞳孔大小及對光反應＋手腳感覺與活動","呼吸與膚色","詢問病史"],a:1,e:"創傷D：①GCS ②瞳孔（大小＋對光反應）③手虎口感覺/活動 ④腳後跟感覺/活動。"},
+{cat:"神經學D",d:"hard",sc:"創傷D評估，雙手握傷患虎口，詢問有無感覺及能否活動，傷患無反應。",q:"下一步應？",o:["記錄繼續","操作虎口疼痛刺激","直接CPR","重新評估意識"],a:1,e:"摸手虎口無反應→操作「虎口疼痛刺激」確認。腳後跟也是，若一開始就無意識兩處都做。"},
+{cat:"神經學D",d:"hard",sc:"創傷D評估瞳孔，左側明顯比右側大，對光反應遲鈍。",q:"這提示？",o:["正常個體差異","顱內壓升高或腦部受傷的重要警訊","光線問題","需再量血壓確認"],a:1,e:"瞳孔不等大＋對光反應異常→顱內壓升高、腦出血或腦疝的重要警訊，立刻回報並加速送醫。"},
+{cat:"神經學D",d:"hard",sc:"創傷D步驟，評估瞳孔大小，手的正確位置？",q:"評估瞳孔大小時，手的姿勢是？",o:["兩手都拿筆燈","上方手撐眼皮，下方手拿筆燈對照兩側大小","一手遮光一手拿燈","視診即可不觸診"],a:1,e:"正確姿勢：「上手撐眼皮，下手拿筆燈」對照兩側大小→再拿筆燈測對光反應。先大小後光反應。"},
+// ===== 暴露 E =====
+{cat:"暴露E",d:"easy",sc:"創傷E（暴露），胸部有開放性吸吮傷口。",q:"正確處置？",o:["直接加壓包紮","固定異物","三留一（三邊封閉一邊通氣）","沖食鹽水後蓋紗布"],a:2,e:"胸部開放性傷口→「三留一」（三邊密封留一邊通氣），防止張力性氣胸形成。"},
+{cat:"暴露E",d:"easy",sc:"創傷E，腹部有刀插入，尚未拔出。",q:"現場處置？",o:["立刻拔出後加壓止血","固定異物，不要拔出","沖食鹽水","用繃帶綁緊"],a:1,e:"穿刺傷→「固定異物，不拔出」！拔出可能造成大出血。用敷料固定兩側，送醫處理。"},
+{cat:"暴露E",d:"easy",sc:"創傷E，手臂閉鎖性骨折（骨頭未穿出）。",q:"現場處置？",o:["嘗試復位","骨折固定（副木）","只包紮不固定","沖食鹽水"],a:1,e:"骨折→「固定」，不要嘗試復位。固定減少疼痛、防止血管神經二次損傷及減少出血。"},
+{cat:"暴露E",d:"easy",sc:"創傷E，大面積燒燙傷傷患。",q:"燒燙傷現場正確處置？",o:["塗抹牙膏或蘆薈","冰塊放在傷口上","沖生理食鹽水後蓋紗布","直接乾燥包紮"],a:2,e:"燒燙傷：沖「生理食鹽水」降溫後蓋紗布。禁止塗任何物質。冰塊可能導致低體溫。"},
+{cat:"暴露E",d:"hard",sc:"創傷E，評估氣管是否偏移。",q:"評估氣管偏移的正確手法？",o:["雙手放兩側感覺","左手比三的姿勢，從脖子頂端往下滑至底端","右手食指觸摸","視診即可"],a:1,e:"「左手比三，從脖子頂端往下滑至底端」評估氣管偏移。氣管偏移可能提示氣胸或縱隔移位。"},
+{cat:"暴露E",d:"hard",sc:"創傷E，沿頸椎逐一按壓評估壓痛。",q:"按壓時詢問傷患的問題是？",o:["這裡有沒有出血？","有沒有感覺我在壓？","這裡會不會酸、痛、麻？","脖子可不可以轉動？"],a:2,e:"頸椎壓痛評估：「邊壓邊詢問是否覺得酸、痛、麻」。任何一種感覺都提示頸椎可能受傷，需保護。"},
+// ===== 生命微象數值 =====
+{cat:"生命微象",d:"easy",sc:"傷患呼吸每分鐘8次。",q:"是否達危急標準？",o:["需<5才危急","是，<10次/分屬危急","只要有呼吸就不危急","需再確認"],a:1,e:"呼吸危急值：>30 或 <10次/分。8次/分<10，達危急（呼吸過慢）。"},
+{cat:"生命微象",d:"easy",sc:"傷患呼吸每分鐘32次。",q:"是否達危急標準？",o:["不是，30多次還好","是，>30次/分屬危急","需再測一次","只有<10才危急"],a:1,e:"呼吸危急值：>30次/分。32>30，屬危急（呼吸過快）。"},
+{cat:"生命微象",d:"easy",sc:"傷患脈搏每分鐘48次。",q:"是否達危急標準？",o:["是，<50次/分屬危急","不是，需<40才危急","再量一次","脈搏慢不算危急"],a:0,e:"脈搏危急值：>150 或 <50次/分。48<50，達危急（嚴重心搏過緩）。"},
+{cat:"生命微象",d:"easy",sc:"傷患收縮壓85 mmHg。",q:"是否達危急標準？",o:["是，<90 mmHg屬危急","不是，需<80才危急","站姿再量","只有>220才危急"],a:0,e:"收縮壓危急值：>220 或 <90 mmHg。85<90，低血壓危急，可能休克。"},
+{cat:"生命微象",d:"easy",sc:"傷患SpO₂ 88%。",q:"是否達危急標準？",o:["需<85%才危急","是，SpO₂<90%為危急","需更多資訊","只要給氧就好"],a:1,e:"血氧危急值：SpO₂<90%。88%<90，屬危急。"},
+{cat:"生命微象",d:"hard",sc:"傷患體溫攝氏40.5度。",q:"是否達危急標準？",o:["是，>40°C就危急","否，需>41°C才危急，40.5尚未達標","任何高燒都危急","體溫不在生命微象中"],a:1,e:"體溫危急值：>41°C 或 <32°C。40.5°C未超過41，尚未達危急。41才是門檻，常見陷阱！"},
+{cat:"生命微象",d:"hard",sc:"傷患體溫攝氏31度。",q:"是否達危急標準？",o:["不是，低一點沒關係","是，<32°C屬危急（嚴重低體溫）","需再量確認","只有<28°C才算嚴重"],a:1,e:"體溫危急值：<32°C屬嚴重低體溫，屬危急。31°C<32，已達危急，需緊急保暖。"},
+{cat:"生命微象",d:"hard",sc:"傷患GCS：E₃V₄M₅=12分。",q:"是否達急性意識不清危急標準？",o:["否，12分不算低","是，GCS<14分屬危急","需再評估","只有<8才危急"],a:1,e:"危急標準：GCS<14。12<14，屬急性意識不清危急。注意：EMT標準是<14，不是<8（<8是插管指標）。"},
+{cat:"生命微象",d:"hard",sc:"微血管充填測試：按壓後2.5秒才回填。",q:"是否達危急標準？",o:["不是，2.5秒差不多","是，>2秒屬危急","需反覆測試","只有>5秒才危急"],a:1,e:"微血管充填危急標準：>2秒。2.5>2，屬危急。輕壓甲床3-5秒後觀察回填時間。"},
+// ===== 危急度判斷 =====
+{cat:"危急判斷",d:"easy",sc:"判定為危急個案，等待專業人員到達。",q:"應每幾分鐘進行一次二度評估？",o:["每3分鐘","每5分鐘","每10分鐘","每15分鐘"],a:1,e:"危急個案：每5分鐘評估一次二度評估。非危急：每15分鐘。後送途中規則相同。"},
+{cat:"危急判斷",d:"easy",sc:"傷患判定為非危急，等待救護車到達。",q:"應每幾分鐘評估一次二度評估？",o:["每5分鐘","每10分鐘","每15分鐘","每30分鐘"],a:2,e:"非危急：每15分鐘評估一次（等待中和後送途中相同）。"},
+{cat:"危急判斷",d:"hard",sc:"非創傷，所有生命微象正常，但血糖計顯示45 mg/dL。",q:"危急度判定？",o:["非危急，生命微象正常","危急，血糖<60 mg/dL屬非創傷特殊危急","觀察30分鐘再判斷","依傷患感覺決定"],a:1,e:"非創傷特殊：血糖<60（或顯示HI）直接列危急，不論其他生命微象。低血糖可迅速導致意識變化。"},
+{cat:"危急判斷",d:"hard",sc:"傷患懷疑急性腦中風，目前生命微象正常。",q:"危急度判定？",o:["非危急，生命微象正常","危急，疑似急性腦中風屬非創傷特殊危急","觀察15分鐘","說話正常就非危急"],a:1,e:"非創傷特殊危急包含：疑似急性腦中風。中風屬時間敏感疾病，即使生命微象正常仍列危急。"},
+{cat:"危急判斷",d:"hard",sc:"危急個案在後送途中（救護車上）。",q:"後送途中應每幾分鐘評估一次？",o:["每2分鐘","每5分鐘","每10分鐘","每15分鐘"],a:1,e:"後送途中危急個案維持「每5分鐘」評估。非危急每15分鐘，規則與等待時相同。"},
+// ===== 二度評估 =====
+{cat:"二度評估",d:"easy",sc:"二度評估八大生命微象，要測量瞳孔。",q:"瞳孔評估正確步驟順序？",o:["先拿筆燈測對光反應，再比大小","先比較兩側大小，再測對光反應","只測一側","從小的那側開始"],a:1,e:"瞳孔步驟：①上手撐眼皮（下手拿筆燈）→ 比較兩側大小 → ②再測兩側對光反應。先大小後光反應。"},
+{cat:"二度評估",d:"easy",sc:"創傷二度評估，傷患耳後有瘀青（Battle's sign）。",q:"這提示可能有？",o:["耳朵外傷","顱底骨折","頸椎骨折","肩膀骨折"],a:1,e:"耳後瘀青（Battle's sign）＋熊貓眼（眼眶周圍瘀青）→ 顱底骨折的重要徵象。"},
+{cat:"二度評估",d:"easy",sc:"非創傷身體檢查，進行胸部聽診四點。",q:"聽診正確順序？",o:["左上→右上→右下→左下","右上→左上→左下→右下","上方兩點再隨意聽下方","只聽右側"],a:1,e:"胸部聽診四點：右上→左上→左下→右下（交叉聽）。確保左右比對，找不對稱呼吸音。"},
+{cat:"二度評估",d:"easy",sc:"非創傷腹部，傷患說右下腹最痛。",q:"四象限觸壓正確順序？",o:["直接壓最痛的右下腹","從最痛對側（左上）開始，最後壓最痛的右下腹","隨機四點","從右上順時針"],a:1,e:"腹部觸壓：「從痛的對側開始，最後才壓最痛處」。避免早期誘發腹肌收縮影響後續評估。"},
+{cat:"二度評估",d:"hard",sc:"非創傷身體檢查，翻開傷患袖子，手臂有多處針孔。",q:"此發現的臨床意義？",o:["正常靜脈穿刺","提示可能有靜脈注射藥物使用史","應轉創傷流程","與評估無關"],a:1,e:"非創傷找：紅疹、紫斑、針孔、水腫。針孔提示可能有靜脈注射藥物使用，是中毒評估的線索。"},
+{cat:"二度評估",d:"hard",sc:"非創傷腹部評估，完成觸壓後。",q:"非創傷腹部必問的額外問題？",o:["有沒有受傷？","最近有無解黑便或血便？","昨天吃了什麼？","有沒有開過刀？"],a:1,e:"非創傷腹部必問：「最近有無解黑便或血便？」消化道出血的重要症狀，創傷流程沒有此問題。"},
+{cat:"二度評估",d:"hard",sc:"創傷二度評估身體檢查，背部及臀部的評估時機？",q:"正確時機是？",o:["一開始就翻傷患","翻上長背板後再check","不需評估背部","等醫院再做"],a:1,e:"創傷背部評估：「翻上長背板後才進行」。不要無故翻動創傷傷患，有支撐時才安全翻身。"},
+{cat:"二度評估",d:"hard",sc:"創傷上肢身體檢查，完成評估後。",q:"確認上肢有無出血，手套的用途？",o:["保護傷患不被你感染","視診確認手套是否有沾染血液（判斷隱性出血）","不需特別看手套","主要是防你被感染"],a:1,e:"創傷上下肢檢查：「視診確認手套是否有沾染血液」，評估是否有隱性出血或傷口。"},
+// ===== 創傷機轉 =====
+{cat:"創傷機轉",d:"easy",sc:"一名成人從7公尺高處墜落。",q:"此受傷機轉屬於？",o:["低危機轉","高危機轉（成人>6公尺屬危急）","視傷患狀況","只有骨折才算高危"],a:1,e:"創傷危急機轉：成人從「6公尺以上（約兩層樓）」墜落屬高危。7公尺超過閾值。"},
+{cat:"創傷機轉",d:"easy",sc:"一名小兒（7歲）從3.5公尺高處墜落。",q:"此受傷機轉屬於？",o:["低危，小孩彈性好","高危機轉（小兒>3公尺屬危急）","視傷患狀況","不算高危"],a:1,e:"創傷危急機轉：小兒從「3公尺以上」墜落屬高危（成人為6公尺）。小孩生理儲備量不同，閾值較低。"},
+{cat:"創傷機轉",d:"hard",sc:"傷患被車輛輾過，但只有腳趾遠端被輾到。",q:"此傷屬創傷危急機轉嗎？",o:["是，任何被車輾都危急","否，危急是「除遠端肢體外之身體被車輛輾過」","視出血量","視車輛速度"],a:1,e:"危急機轉：「除遠端肢體外之身體被車輛輾過」才算。只有遠端肢體被輾不在此列。"},
+{cat:"創傷機轉",d:"hard",sc:"車禍現場，同車另一乘客已當場死亡。",q:"這對存活傷患危急度有何影響？",o:["沒有影響，各自評估","同車有死亡者屬高危機轉，存活者需列為危急","需確認生命微象才能判斷","死亡者不影響存活者"],a:1,e:"危急機轉：「同車有死亡者或其他高能量撞擊」屬高危。能量足以造成同車死亡，存活者可能也有嚴重潛在傷害。"},
+// ===== 非創傷特殊 =====
+{cat:"非創傷特殊",d:"easy",sc:"非創傷，懷疑毒蛇咬傷，目前生命微象正常。",q:"危急度判定？",o:["非危急，生命微象正常","危急，毒蛇咬傷屬非創傷特殊危急","等出現症狀再說","輕微咬傷不算危急"],a:1,e:"毒蛇咬傷屬非創傷特殊危急，即使目前症狀輕微、生命微象正常，仍直接列危急。毒素作用可能延遲。"},
+{cat:"非創傷特殊",d:"easy",sc:"傷患在泳池溺水被救起，意識清楚，呼吸正常。",q:"危急度判定？",o:["非危急，意識清楚","危急，淹水屬非創傷特殊危急","觀察30分鐘再決定","沒有嗆水就非危急"],a:1,e:"淹水屬非創傷特殊危急。即使意識清楚也列危急，因為可能出現延遲性肺水腫（乾性溺水）。"},
+{cat:"非創傷特殊",d:"hard",sc:"傷患血糖計顯示HI（超過機器上限）。",q:"危急度判定？",o:["非危急，血糖高不如低危險","危急，血糖顯示HI屬非創傷特殊危急","再量一次確認","依意識決定"],a:1,e:"非創傷特殊：「血糖<60或顯示HI」均屬危急。嚴重高血糖可能是糖尿病酮酸中毒前兆。"},
+{cat:"非創傷特殊",d:"hard",sc:"傷患持續抽搐剛結束，意識逐漸恢復。",q:"危急度判定？",o:["非危急，已經停止","危急，持續抽搐或剛結束屬非創傷特殊危急","等10分鐘看看","意識恢復就是非危急"],a:1,e:"非創傷特殊危急：「持續抽搐或剛結束」均屬危急。可能再次發作，且可能有潛在病因需緊急處理。"},
+// ===== 輔助檢查 =====
+{cat:"輔助檢查",d:"easy",sc:"初步評估完成，輔助檢查後SpO₂仍為92%。",q:"SpO₂仍<94%，應如何？",o:["繼續等待看會不會自己上升","考慮更換或升級給氧裝置","立刻CPR","先量血壓"],a:1,e:"輔助檢查後SpO₂仍<94%，「考慮更換給氧裝置」（升級），如鼻導管→面罩→非再呼吸型面罩。"},
+{cat:"輔助檢查",d:"hard",sc:"副手在初評流程中，目前主手正在忙，有空檔。",q:"副手可利用空檔做什麼？",o:["等主手完成才行動","利用空檔詢問傷患病史","整理裝備","協助旁觀者離開"],a:1,e:"輔助檢查規定：副手「在初評流程中有空檔時，亦可詢問病史」。有機會就收集，但不能妨礙主流程。"}
+];
+
+let diff='all',cnt=30,pool=[],cur=0,correct=0,wrong=0,wrongQs=[];
+function setDiff(v){diff=v;['d0','d1','d2'].forEach(id=>document.getElementById(id).classList.remove('active'));document.getElementById(v==='easy'?'d0':v==='hard'?'d1':'d2').classList.add('active');}
+function setCnt(v){cnt=v;['c0','c1','c2'].forEach(id=>document.getElementById(id).classList.remove('active'));document.getElementById(v===10?'c0':v===30?'c1':'c2').classList.add('active');}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function startQuiz(){
+  let p=diff==='all'?[...B]:B.filter(q=>q.d===diff);
+  p=shuffle(p).slice(0,Math.min(cnt,p.length));
+  pool=p;cur=0;correct=0;wrong=0;wrongQs=[];
+  document.getElementById('cfg').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('sr').textContent=pool.length;
+  render();
+}
+function render(){
+  const q=pool[cur];
+  const total=pool.length;
+  document.getElementById('qTitle').textContent=`${cur+1}/${total}`;
+  document.getElementById('qnum').textContent=`題目 ${cur+1} / ${total}`;
+  document.getElementById('qcat').textContent=q.cat;
+  const db=document.getElementById('qdiff');
+  db.textContent=q.d==='easy'?'🟢 基礎':'🟣 進階';
+  db.className='q-cat-badge '+(q.d==='easy'?'q-diff-easy':'q-diff-hard');
+  document.getElementById('qscene').textContent='📋 情境：'+q.sc;
+  document.getElementById('qask').textContent='❓ '+q.q;
+  const L=['A','B','C','D'];
+  const opts=document.getElementById('opts');
+  opts.innerHTML='';
+  q.o.forEach((o,i)=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.innerHTML=`<span class="opt-l">${L[i]}</span><span>${o}</span>`;
+    d.onclick=()=>select(i);
+    opts.appendChild(d);
+  });
+  const fb=document.getElementById('fb');
+  fb.style.display='none';
+  document.getElementById('btnN').disabled=true;
+  document.getElementById('pbar').style.width=`${(cur/pool.length)*100}%`;
+  document.getElementById('qctr').textContent=`已答 ${cur} 題`;
+}
+function select(i){
+  const all=document.querySelectorAll('.opt');
+  if(all[0].classList.contains('locked'))return;
+  all.forEach(el=>el.classList.add('locked'));
+  const q=pool[cur];
+  const fb=document.getElementById('fb');
+  if(i===q.a){correct++;document.getElementById('sc').textContent=correct;all[i].classList.add('c-right');fb.className='fb fb-ok';fb.innerHTML='✅ <strong>答對了！</strong> '+q.e;}
+  else{wrong++;document.getElementById('sw').textContent=wrong;all[i].classList.add('c-wrong');all[q.a].classList.add('c-right');wrongQs.push(cur);fb.className='fb fb-no';fb.innerHTML='❌ <strong>答錯了。</strong> '+q.e;}
+  document.getElementById('sr').textContent=pool.length-cur-1;
+  fb.style.display='block';
+  document.getElementById('btnN').disabled=false;
+}
+function nextQ(){cur++;if(cur>=pool.length){showResult();return;}render();}
+function showResult(){
+  document.getElementById('quiz').style.display='none';
+  const res=document.getElementById('result');
+  res.style.display='block';
+  document.getElementById('pbar').style.width='100%';
+  const pct=Math.round((correct/pool.length)*100);
+  let color='#27ae60',emoji='🏆',title='完美！考試必過';
+  if(pct<60){color='#e74c3c';emoji='😅';title='需要再加油！';}
+  else if(pct<75){color='#f39c12';emoji='💪';title='不錯！繼續努力';}
+  else if(pct<90){color='#2980b9';emoji='👍';title='很棒！快達標了';}
+  const rc=document.getElementById('rc');
+  rc.style.background=color;
+  rc.innerHTML=`${emoji}<div style="font-size:13px;margin-top:4px;">${pct}%</div>`;
+  document.getElementById('rt').textContent=title;
+  document.getElementById('rs').textContent=`共${pool.length}題，答對${correct}題，答錯${wrong}題`;
+  document.getElementById('rv-c').textContent=correct;
+  document.getElementById('rv-w').textContent=wrong;
+  document.getElementById('rv-p').textContent=pct+'%';
+  // Category breakdown
+  const cats={};pool.forEach((q,i)=>{if(!cats[q.cat])cats[q.cat]={t:0,c:0};cats[q.cat].t++;if(!wrongQs.includes(i))cats[q.cat].c++;});
+  const rc2=document.getElementById('rcats');
+  rc2.innerHTML='<h3>📊 分類正確率</h3>';
+  Object.entries(cats).sort((a,b)=>a[1].c/a[1].t-b[1].c/b[1].t).forEach(([cat,v])=>{
+    const p=Math.round(v.c/v.t*100);
+    const clr=p>=80?'#27ae60':p>=60?'#f39c12':'#e74c3c';
+    rc2.innerHTML+=`<div class="cat-row"><span class="cat-name">${cat}</span><div class="cat-bar-bg"><div class="cat-bar" style="width:${p}%;background:${clr}"></div></div><span class="cat-pct" style="color:${clr}">${p}%</span></div>`;
+  });
+  // Wrong list
+  const wl=document.getElementById('wl');
+  if(wrongQs.length>0){
+    wl.innerHTML='<h3>❌ 答錯的題目</h3>';
+    wrongQs.forEach(n=>{const q=pool[n];wl.innerHTML+=`<div class="wi"><strong>第${n+1}題 [${q.cat}${q.d==='hard'?' 🟣':''}]</strong><br>${q.q}<br>→ 正解：${['A','B','C','D'][q.a]}. ${q.o[q.a]}</div>`;});
+  } else {
+    wl.innerHTML='<div style="text-align:center;padding:14px;color:#27ae60;font-weight:bold;font-size:14px;">🎉 全部答對！完美！</div>';
+  }
+}
+function goConfig(){document.getElementById('result').style.display='none';document.getElementById('cfg').style.display='block';}
+document.getElementById('badgeCount').textContent=B.length;
+</script>
+</body></html>
