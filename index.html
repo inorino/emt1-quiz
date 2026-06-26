@@ -74,7 +74,21 @@ body{font-family:'Microsoft JhengHei','Noto Sans TC',sans-serif;background:#1a1a
 .wrong-list h3{font-size:12px;color:#c0392b;margin-bottom:8px;}
 .wi{font-size:11px;color:#555;padding:4px 0;border-bottom:1px solid #f5f5f5;line-height:1.5;}
 .btn-restart{background:linear-gradient(135deg,#c0392b,#e74c3c);color:white;border:none;border-radius:12px;padding:12px 28px;font-size:14px;font-weight:bold;cursor:pointer;font-family:inherit;width:100%;}
+/* ─── ZOOM CONTROL ─── */
+#zoombar{position:fixed;right:10px;bottom:10px;z-index:9999;display:flex;align-items:center;gap:3px;background:rgba(20,20,40,.82);padding:5px 6px;border-radius:22px;box-shadow:0 2px 10px rgba(0,0,0,.35);}
+#zoombar .zlb{color:#fff;font-size:12px;padding:0 3px;}
+#zoombar button{border:none;background:rgba(255,255,255,.16);color:#fff;font-family:inherit;font-size:11px;font-weight:bold;padding:5px 8px;border-radius:14px;cursor:pointer;line-height:1;min-width:34px;}
+#zoombar button.active{background:#e74c3c;}
 </style></head><body>
+
+<!-- ZOOM -->
+<div id="zoombar">
+  <span class="zlb">🔍</span>
+  <button data-z="1" class="active" onclick="setZoom(1)">100</button>
+  <button data-z="1.25" onclick="setZoom(1.25)">125</button>
+  <button data-z="1.5" onclick="setZoom(1.5)">150</button>
+  <button data-z="2" onclick="setZoom(2)">200</button>
+</div>
 
 <!-- CONFIG -->
 <div id="cfg">
@@ -334,5 +348,11 @@ function showResult(){
 }
 function goConfig(){document.getElementById('result').style.display='none';document.getElementById('cfg').style.display='block';}
 document.getElementById('badgeCount').textContent=B.length;
+function setZoom(z){
+  document.querySelectorAll('#cfg,#quiz,#result').forEach(function(el){el.style.zoom=z;});
+  document.querySelectorAll('#zoombar button').forEach(function(b){b.classList.toggle('active',parseFloat(b.dataset.z)===z);});
+  try{localStorage.setItem('emt_zoom',String(z));}catch(e){}
+}
+(function(){try{var z=parseFloat(localStorage.getItem('emt_zoom'));if(z&&z!==1)setZoom(z);}catch(e){}})();
 </script>
 </body></html>
